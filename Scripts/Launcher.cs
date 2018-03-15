@@ -60,7 +60,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         void Start()
         {
-
+            Debug.Log(PhotonNetwork.versionPUN);
         }
 
         // Update is called once per frame
