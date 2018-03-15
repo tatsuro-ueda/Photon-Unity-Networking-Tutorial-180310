@@ -19,6 +19,10 @@ namespace Education.FeelPhysics.PhotonTutorial
         [Tooltip("ルームの最大プレイヤー人数。ルームが満員になると、その部屋に新しいプレイヤーが入ることはできないため、新しいルームが作成されます。")]
         public byte MaxPlayersPerRoom = 4;
 
+        [Tooltip("ユーザに名前を入力させ、接続してプレイさせるためのUIパネル")]
+        public GameObject controlPanel;
+        [Tooltip("ユーザに接続が進行中であることを知らせるUIラベル")]
+        public GameObject progressLabel;
         #endregion
 
         #region Private Variables
@@ -60,7 +64,12 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         void Start()
         {
+            // PUNのバージョンをログに表示
             Debug.Log(PhotonNetwork.versionPUN);
+
+            // コントロールパネルは表示し、進行中ラベルは非表示
+            controlPanel.SetActive(true);
+            progressLabel.SetActive(false);
         }
 
         // Update is called once per frame
@@ -75,6 +84,10 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         public void Connect()
         {
+            // コントロールパネルは非表示、進行中ラベルは表示
+            controlPanel.SetActive(false);
+            progressLabel.SetActive(true);
+
             // 接続していればルームに入り、
             // そうでなければサーバー接続を初期化する
             if (PhotonNetwork.connected)
@@ -106,6 +119,10 @@ namespace Education.FeelPhysics.PhotonTutorial
         }
         public override void OnDisconnectedFromPhoton()
         {
+            // コントロールパネルは表示し、進行中ラベルは非表示
+            controlPanel.SetActive(true);
+            progressLabel.SetActive(false);
+
             base.OnDisconnectedFromPhoton();
             MyHelper.DebugLog("");
         }

@@ -393,6 +393,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Loglevel: 1
   MaxPlayersPerRoom: 4
+  controlPanel: {fileID: 397588648}
+  progressLabel: {fileID: 1150525838}
 --- !u!4 &943748785
 Transform:
   m_ObjectHideFlags: 0
@@ -527,7 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 0.6397059, b: 0.6397059, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -541,13 +543,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: "\u63A5\u7D9A\u4E2D\u2026"
 --- !u!222 &1150525841
 CanvasRenderer:
   m_ObjectHideFlags: 0
