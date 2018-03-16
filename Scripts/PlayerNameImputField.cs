@@ -26,7 +26,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         {
             string defaultName = "";
             InputField _inputField = this.GetComponent<InputField>();
-            if (_inputField = null)
+            if (_inputField == null)
             {
                 if (PlayerPrefs.HasKey(playerNamePrefKey))
                 {
@@ -59,7 +59,7 @@ namespace Education.FeelPhysics.PhotonTutorial
             PhotonNetwork.playerName = name + " ";
 
             PlayerPrefs.SetString(playerNamePrefKey, name);
-            MyHelper.DebugLog("プレイヤー名が " + name + " に設定されました。");
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage("プレイヤー名が " + name + " に設定されました。"));
         }
         #endregion
     }

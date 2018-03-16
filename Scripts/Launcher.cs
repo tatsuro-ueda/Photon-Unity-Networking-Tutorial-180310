@@ -34,6 +34,14 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         string _gameVersion = "1";
 
+        /// <summary>
+        /// 現在のプロセスを追跡し続ける。
+        /// 接続は非同期で Photon のいくつかのコールバックに依存しているため、
+        /// Photon からのコールバックを受け取ったときの挙動を適切に調節するために、現在のプロセスを追跡し続けなければならない。
+        /// これは、特に OnConnectedToMaster() コールバックのために使われる。
+        /// </summary>
+        bool isConnecting;
+
         #endregion
 
         #region MonoBehaviour CallBacks
@@ -48,11 +56,11 @@ namespace Education.FeelPhysics.PhotonTutorial
             // ログレベルを指定する
             PhotonNetwork.logLevel = Loglevel;
 
-            // 【致命的】
+            // 【必要】
             // ロビーに入って他のプレイヤーのリストを見ることはしない
             PhotonNetwork.autoJoinLobby = false;
 
-            // 【致命的】
+            // 【必要】
             // PhotonNetwork.LoadLevel()をマスタークライアントで実行すれば
             // 他のクライアントはすべて同じルームに入る
             PhotonNetwork.automaticallySyncScene = true;
@@ -65,7 +73,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         void Start()
         {
             // PUNのバージョンをログに表示
-            Debug.Log(PhotonNetwork.versionPUN);
+            Debug.Log("PUN バージョン: " + PhotonNetwork.versionPUN);
 
             // コントロールパネルは表示し、進行中ラベルは非表示
             controlPanel.SetActive(true);
@@ -82,8 +90,16 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #region Public Methods
 
+        /// <summary>
+        /// Play Button を押下すると呼ばれる
+        /// </summary>
         public void Connect()
         {
+            // ルームに参加する意思を追跡し続ける。
+            // プレイヤーがゲームを出て帰ってきたときに「接続した」ときのコールバックを受け取ってしまうため、
+            // プレイヤーが何をしようとしているのかを知る必要がある。
+            isConnecting = true;
+
             // コントロールパネルは非表示、進行中ラベルは表示
             controlPanel.SetActive(false);
             progressLabel.SetActive(true);
@@ -92,14 +108,14 @@ namespace Education.FeelPhysics.PhotonTutorial
             // そうでなければサーバー接続を初期化する
             if (PhotonNetwork.connected)
             {
-                // 【致命的】ランダムなルームに入る必要がある
+                // 【必要】ランダムなルームに入る必要がある
                 // 失敗した場合はOnPhotonRandomJoinFailed()によって通知され、
                 // ルームをつくる
                 PhotonNetwork.JoinRandomRoom();
             }
             else
             {
-                // 【致命的】まず最初にPhotonオンラインサーバに接続しなければならない
+                // 【必要】まず最初にPhotonオンラインサーバに接続しなければならない
                 PhotonNetwork.ConnectUsingSettings(_gameVersion);
             }
         }
@@ -111,11 +127,17 @@ namespace Education.FeelPhysics.PhotonTutorial
         public override void OnConnectedToMaster()
         {
             base.OnConnectedToMaster();
-            MyHelper.DebugLog("");
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage(""));
 
-            // 【致命的】すでに存在するかもしれないルームに入る最初の試み
-            // 既に存在すれば良いし、さもなくばOnPhotonRandomJoinFailed()が呼ばれる
-            PhotonNetwork.JoinRandomRoom();
+            // プレイヤーがルームに参加しようとしていないときは、何もしたくない。
+            // isConnecting が false の場合は、プレイヤーがゲームで負けたかゲームを終了するときであり、
+            // このレベルがロードされたとき OnConnectedToMaster が呼ばれるが、この場合は、何もしない。
+            if (isConnecting)
+            {
+                // 【必要】すでに存在するかもしれないルームに入る最初の試み
+                // 既に存在すればよいし、さもなくばOnPhotonRandomJoinFailed()が呼ばれる
+                PhotonNetwork.JoinRandomRoom();
+            }
         }
         public override void OnDisconnectedFromPhoton()
         {
@@ -124,24 +146,35 @@ namespace Education.FeelPhysics.PhotonTutorial
             progressLabel.SetActive(false);
 
             base.OnDisconnectedFromPhoton();
-            MyHelper.DebugLog("");
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage(""));
         }
 
         public override void OnPhotonRandomJoinFailed(object[] codeAndMsg)
         {
             base.OnPhotonRandomJoinFailed(codeAndMsg);
-            MyHelper.DebugLog("利用可能なランダムルームがないので、作成します\n" +
-                "呼び出し中: PhotonNetwork.CreateRoom(null, new RoomOptions() {maxPlayers = 4}, null);");
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage("利用可能なランダムルームがないので、作成します\n" +
+                "呼び出し中: PhotonNetwork.CreateRoom(null, new RoomOptions() {maxPlayers = 4}, null);"));
 
-            // 【致命的】ランダムルームに参加するのに失敗しました。
+            // 【必要】ランダムルームに参加するのに失敗しました。
             // 1つも存在しないか、すべて満員です。心配ありません、新しく1つルームを作成します。
-            PhotonNetwork.CreateRoom(null, new RoomOptions() { maxPlayers = MaxPlayersPerRoom }, null);
+            PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = MaxPlayersPerRoom }, null);
         }
 
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
-            MyHelper.DebugLog("今、このクライアントはルームの中にいます。");
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage("今、このクライアントはルームの中にいます。"));
+
+            // 【必要】自分が一人目のプレイヤーのときのみルームをロードし、
+            // それ以外のときは、インスタンスシーンに同期するのは 
+            // PhotonNetwork.automaticallySyncScene にまかせる
+            if(PhotonNetwork.room.PlayerCount == 1)
+            {
+                Debug.Log(MyHelper.FileAndMethodNameWithMessage("「Room for 1」をロードします"));
+
+                // 【必要】ルームをロードする
+                PhotonNetwork.LoadLevel("Room for 1");
+            }
         }
         #endregion
     }

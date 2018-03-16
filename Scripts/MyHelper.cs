@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 
+using UnityEngine;
+
 namespace Education.FeelPhysics
 {
     // グローバル定数
@@ -14,24 +16,27 @@ namespace Education.FeelPhysics
 
     static public class MyHelper
     {
-        // コンソール
-        public static void DebugLog(String message)
+
+        #region Private Methods
+
+        #endregion
+
+        #region Public Methods
+
+        public static string FileAndMethodNameWithMessage(string message)
         {
-#if UNITY_EDITOR
-            if (GlobalVar.shouldDebugLog)
-            {
-                StackFrame sf = new StackFrame(1, true);
+            StackFrame sf = new StackFrame(1, true);
 
-                String methodName = sf.GetMethod().ToString();  // 未使用
+            String methodName = sf.GetMethod().ToString();
 
-                List<string> filePathElementList = new List<string>();
-                filePathElementList.AddRange(sf.GetFileName().Split('\\'));
-                String fileName = filePathElementList.Last();
+            List<string> filePathElementList = new List<string>();
+            filePathElementList.AddRange(sf.GetFileName().Split('\\'));
+            String fileName = filePathElementList.Last();
 
-                int lineNumber = sf.GetFileLineNumber();
-                UnityEngine.Debug.Log(fileName + "(" + lineNumber + "): " + methodName + "が呼び出されました。" + message);
-            }
-#endif
+            int lineNumber = sf.GetFileLineNumber();
+            return fileName + "(" + lineNumber + "): " + methodName + " が呼び出されました。" + message;
         }
+
+        #endregion
     }
 }
