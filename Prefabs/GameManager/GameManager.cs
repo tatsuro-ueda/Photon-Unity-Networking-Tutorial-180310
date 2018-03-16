@@ -8,6 +8,20 @@ namespace Education.FeelPhysics.PhotonTutorial
 {
     public class GameManager : Photon.PunBehaviour
     {
+        #region Public Properties
+
+        static public GameManager Instance;
+
+        #endregion
+
+        #region MonoBehaviour CallBacks
+
+        private void Start()
+        {
+            Instance = this;
+        }
+
+        #endregion
 
         #region Photon CallBacks
 
@@ -69,17 +83,5 @@ namespace Education.FeelPhysics.PhotonTutorial
         }
 
         #endregion
-
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

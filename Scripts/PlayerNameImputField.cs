@@ -12,7 +12,7 @@ namespace Education.FeelPhysics.PhotonTutorial
     [RequireComponent(typeof(InputField))]
     public class PlayerNameImputField : MonoBehaviour
     {
-        #region Private Variables
+        #region Private Properties
 
         // タイプミスを避けるため、PlayerPrefキーを格納する
         static string playerNamePrefKey = "PlayerName";

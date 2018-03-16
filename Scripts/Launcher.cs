@@ -6,7 +6,7 @@ namespace Education.FeelPhysics.PhotonTutorial
 {
     public class Launcher : Photon.PunBehaviour, IPunCallbacks
     {
-        #region Public Variables
+        #region Public Properties
 
         /// <summary>
         /// PUN ログレベル
@@ -25,7 +25,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         public GameObject progressLabel;
         #endregion
 
-        #region Private Variables
+        #region Private Properties
 
         /// <summary>
         /// バージョン番号。
@@ -47,8 +47,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         #region MonoBehaviour CallBacks
 
         /// <summary>
-        /// 初期化の早い段階でUnityによってGameObject上に呼ばれる
-        /// MonoBegaviourのメソッド
+        /// 初期化の早い段階で Unity によって GameObject 上に呼ばれる MonoBegaviour のメソッド
         /// </summary>
         private void Awake()
         {
