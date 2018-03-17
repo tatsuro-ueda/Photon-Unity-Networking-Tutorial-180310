@@ -12,17 +12,20 @@ namespace Education.FeelPhysics.PhotonTutorial
     public class PlayerManager : Photon.PunBehaviour, IPunObservable
     {
 
-        #region Public Properties
+        #region Public Variables
 
         [Tooltip("制御するビーム GameObject")]
         public GameObject Beams;
 
         [Tooltip("プレイヤーの現在の体力")]
-        public float health = 1f;
+        public float Health = 1f;
+
+        [Tooltip("ローカルプレイヤーのインスタンス。ローカルプレイヤーがシーンに現れたか知るためにこれを使って下さい")]
+        static public GameObject LocalPlayerInstance; 
 
         #endregion
 
-        #region Private Properties
+        #region Private Variables
 
         // ユーザーがfireしているときは true
         bool isFiring;
@@ -36,6 +39,17 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         private void Awake()
         {
+            // 【重要】
+            // レベルが同期されるときにインスタンス化されることを避けるために、ローカルプレイヤーのインスタンスを追跡し続ける
+            if (photonView.isMine)
+            {
+                LocalPlayerInstance = this.gameObject;
+            }
+            // 【必要】
+            // ロードする際に破壊しないというフラグを立てて、インスタンスがレベルが同期しても維持されるようにする
+            // これにより、レベルがロードされたときにシームレスに移行する
+            DontDestroyOnLoad(this.gameObject);
+
             if (Beams == null)
             {
                 // [Unity] Debug.Log で出力する文字の色を変えよう - Qiita https://qiita.com/phi/items/d98a177f4e12426d9f4f
@@ -66,7 +80,8 @@ namespace Education.FeelPhysics.PhotonTutorial
             }
             else
             {
-                Debug.LogError("<Color=Red><a>Missing</a></Color> CameraWork Component on playerPrefab.", this);
+                Debug.LogError(MyHelper.FileAndMethodNameWithMessage(
+                    "CameraWorkコンポーネントがプレイヤープレハブに<Color=Red>ありません</Color>。"));
             }
         }
 
@@ -84,7 +99,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                 Beams.SetActive(isFiring);
             }
 
-            if(health <= 0)
+            if(Health <= 0)
             {
                 GameManager.Instance.LeaveRoom();
             }
@@ -112,7 +127,7 @@ namespace Education.FeelPhysics.PhotonTutorial
             }
 
             // 自分の体力が減る
-            health -= 0.1f;
+            Health -= 0.1f;
         }
 
         /// <summary>
@@ -137,7 +152,7 @@ namespace Education.FeelPhysics.PhotonTutorial
             // ビームがずっと自分に当たっているあいだ、ゆっくりと体力を減らす
             // 死んでしまわないためにはプレイヤーは移動しなければならない
             // deltaTime はフレーム間時間
-            health -= 0.1f * Time.deltaTime;
+            Health -= 0.1f * Time.deltaTime;
         }
 
         #endregion

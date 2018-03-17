@@ -6,7 +6,7 @@ namespace Education.FeelPhysics.PhotonTutorial
 {
     public class Launcher : Photon.PunBehaviour, IPunCallbacks
     {
-        #region Public Properties
+        #region Public Variables
 
         /// <summary>
         /// PUN ログレベル
@@ -25,7 +25,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         public GameObject progressLabel;
         #endregion
 
-        #region Private Properties
+        #region Private Variables
 
         /// <summary>
         /// バージョン番号。

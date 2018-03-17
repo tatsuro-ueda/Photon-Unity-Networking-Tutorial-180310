@@ -1751,7 +1751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Beams: {fileID: 1842106773505080}
-  health: 1
+  Health: 1
 --- !u!114 &114560240500877158
 MonoBehaviour:
   m_ObjectHideFlags: 1
