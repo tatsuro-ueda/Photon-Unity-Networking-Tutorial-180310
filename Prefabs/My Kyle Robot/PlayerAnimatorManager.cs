@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Education.FeelPhysics.PhotonTutorial
 {
-    public class PlayerAnimatorManager : MonoBehaviour
+    public class PlayerAnimatorManager : Photon.MonoBehaviour
     {
         #region Public Properties
 
@@ -32,6 +32,16 @@ namespace Education.FeelPhysics.PhotonTutorial
         // Update is called once per frame
         void Update()
         {
+            // インスタンスが クライアントアプリケーションによって制御されている場合、
+            // このインスタンスはこのコンピュータのこのアプリケーション内でプレイしているユーザを表し、
+            // PhotonView.isMine は true になります。
+            // PhotonNetwork.connected == true を強制するのは、
+            // 開発中に接続されていない状態でこのプレハブをテストできるようにするためです。
+            if (photonView.isMine == false && PhotonNetwork.connected == true)
+            {
+                return;
+            }
+
             if (!animator)
             {
                 return;

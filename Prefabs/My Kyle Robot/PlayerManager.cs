@@ -9,7 +9,7 @@ namespace Education.FeelPhysics.PhotonTutorial
     /// fire Input とビームを扱う
     /// プレイヤーの体力を管理する
     /// </summary>
-    public class PlayerManager : Photon.MonoBehaviour
+    public class PlayerManager : Photon.PunBehaviour, IPunObservable
     {
 
         #region Public Properties
@@ -50,13 +50,33 @@ namespace Education.FeelPhysics.PhotonTutorial
         // Use this for initialization
         void Start()
         {
+            // まず、CameraWorkコンポーネントを取得します。 見つからない場合、エラーが記録されます。
+            MyCameraWork _cameraWork = this.gameObject.GetComponent<MyCameraWork>();
 
+            if (_cameraWork != null)
+            {
+                // 次に、photonView.isMineがtrueの場合は、このインスタンスを追走する必要があることを意味するので、
+                // _cameraWork.OnStartFollowing()を呼び出し、シーン内のそのインスタンスをカメラが効果的に追従させます。
+                // 他のすべてのプレイヤーインスタンスは、photonView.isMineをfalseに設定されているため、
+                // それぞれの_cameraWorkは何も行いません。
+                if (photonView.isMine)
+                {
+                    _cameraWork.OnStartFollowing();
+                }
+            }
+            else
+            {
+                Debug.LogError("<Color=Red><a>Missing</a></Color> CameraWork Component on playerPrefab.", this);
+            }
         }
 
         // Update is called once per frame
         void Update()
         {
-            ProcessInputs();
+            if (photonView.isMine)
+            {
+                ProcessInputs();
+            }
 
             // Beams オブジェクトの active 状態を変化させる
             if (Beams!=null && isFiring != Beams.GetActive())
@@ -118,6 +138,32 @@ namespace Education.FeelPhysics.PhotonTutorial
             // 死んでしまわないためにはプレイヤーは移動しなければならない
             // deltaTime はフレーム間時間
             health -= 0.1f * Time.deltaTime;
+        }
+
+        #endregion
+
+        #region Photon CallBacks
+
+        /// <summary>
+        /// このIPunObservable.OnPhotonSerializeViewメソッドでは、stream変数が渡されます。
+        /// localPlayer（PhotonView.isMine == true）の場合のみ書きこむことができます。それ以外の場合は読み込みます。
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="info"></param>
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.isWriting)
+            {
+                // これをネットワーク上で送信し、データを読み書きする場合に呼び出します。
+                // stream.SendNext()を使用して、データのストリームにIsFiring値を追加します。
+                stream.SendNext(isFiring);
+            }
+            else
+            {
+                // ネットワーク上のプレイヤーはデータを受け取る
+                // 読み込みが必要な場合は、stream.ReceiveNext()を使用します。
+                this.isFiring = (bool)stream.ReceiveNext();
+            }
         }
 
         #endregion
