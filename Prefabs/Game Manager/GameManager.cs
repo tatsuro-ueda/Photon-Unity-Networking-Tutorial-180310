@@ -43,7 +43,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                     // Quaternion.identity: このクォータニオンは「回転していない」のと同じで、
                     // オブジェクトは完全にワールドか、親の軸にそろっています。
                     PhotonNetwork.Instantiate(
-                        playerPrefab.name, new Vector3(0f, 5f, 0f), Quaternion.identity, 0);
+                        playerPrefab.name, new Vector3(0f, 1.0f, 0f), Quaternion.identity, 0);
                 }
                 else
                 {
@@ -61,7 +61,7 @@ namespace Education.FeelPhysics.PhotonTutorial
             // 初めてルームに入った時のように中心に再配置する必要があります。
             if (!Physics.Raycast(transform.position, -Vector3.up, 5f))
             {
-                transform.position = new Vector3(0f, 5f, 0f);
+                transform.position = new Vector3(0f, 1.0f, 0f);
             }
         }
 
