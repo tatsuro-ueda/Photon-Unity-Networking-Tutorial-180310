@@ -36,39 +36,6 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #endregion
 
-        #region Photon CallBacks
-
-        /// <summary>
-        /// 射撃をテストする際、ローカルプレイヤーによる射撃しか確認することができません。
-        /// 他のインスタンスがいつ射撃するかを確認する必要があります。
-        /// ネットワーク上で射撃を同期させるメカニズムが必要です。
-        /// これを行うには、IsFiringブール値を手動で同期させます。
-        /// これまでは、PhotonTransformView と PhotonAnimatorView を使って変数を内部的に同期させることができました。
-        /// Unity Inspectorで公開されていたもののみの調整で済みましたが、
-        /// 今回必要なのはこのゲーム特有のものなので、手動で行う必要があります。
-        /// このIPunObservable.OnPhotonSerializeViewメソッドでは、stream変数が渡されます。
-        /// localPlayer（PhotonView.isMine == true）の場合のみ書きこむことができます。それ以外の場合は読み込みます。
-        /// </summary>
-        /// <param name="stream">手動で同期させる値を格納する変数</param>
-        /// <param name="info">よくわからん</param>
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            if (stream.isWriting)
-            {
-                // これをネットワーク上で送信し、データを読み書きする場合に呼び出します。
-                // stream.SendNext()を使用して、データのストリームにIsFiring値を追加します。
-                stream.SendNext(this.isFiring);
-            }
-            else
-            {
-                // ネットワーク上のプレイヤーはデータを受け取る
-                // 読み込みが必要な場合は、stream.ReceiveNext()を使用します。
-                this.isFiring = (bool)stream.ReceiveNext();
-            }
-        }
-
-        #endregion
-
         #region MonoBehaviour CallBacks
 
         /// <summary>
@@ -213,6 +180,39 @@ namespace Education.FeelPhysics.PhotonTutorial
             // 死んでしまわないためにはプレイヤーは移動しなければならない
             // deltaTime はフレーム間時間
             this.Health -= 0.1f * Time.deltaTime;
+        }
+
+        #endregion
+
+        #region Photon CallBacks
+
+        /// <summary>
+        /// 射撃をテストする際、ローカルプレイヤーによる射撃しか確認することができません。
+        /// 他のインスタンスがいつ射撃するかを確認する必要があります。
+        /// ネットワーク上で射撃を同期させるメカニズムが必要です。
+        /// これを行うには、IsFiringブール値を手動で同期させます。
+        /// これまでは、PhotonTransformView と PhotonAnimatorView を使って変数を内部的に同期させることができました。
+        /// Unity Inspectorで公開されていたもののみの調整で済みましたが、
+        /// 今回必要なのはこのゲーム特有のものなので、手動で行う必要があります。
+        /// このIPunObservable.OnPhotonSerializeViewメソッドでは、stream変数が渡されます。
+        /// localPlayer（PhotonView.isMine == true）の場合のみ書きこむことができます。それ以外の場合は読み込みます。
+        /// </summary>
+        /// <param name="stream">手動で同期させる値を格納する変数</param>
+        /// <param name="info">よくわからん</param>
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.isWriting)
+            {
+                // これをネットワーク上で送信し、データを読み書きする場合に呼び出します。
+                // stream.SendNext()を使用して、データのストリームにIsFiring値を追加します。
+                stream.SendNext(this.isFiring);
+            }
+            else
+            {
+                // ネットワーク上のプレイヤーはデータを受け取る
+                // 読み込みが必要な場合は、stream.ReceiveNext()を使用します。
+                this.isFiring = (bool)stream.ReceiveNext();
+            }
         }
 
         #endregion

@@ -19,6 +19,30 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #endregion
 
+        #region MonoBehaviour CallBacks
+
+        /// <summary>
+        /// 過去に使用したプレイヤー名を入力欄に表示する
+        /// </summary>
+        private void Start()
+        {
+            string defaultName = "";
+            InputField inputField = this.GetComponent<InputField>();
+            if (inputField == null)
+            {
+                // PlayerPrefs は UnityEngine が提供するプレイヤー情報のディクショナリ
+                if (PlayerPrefs.HasKey(playerNamePrefKey))
+                {
+                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                    inputField.text = defaultName;
+                }
+            }
+
+            PhotonNetwork.playerName = defaultName;
+        }
+
+        #endregion
+
         #region Public Methods
         /// <summary>
         /// プレイヤー名を設定し、以後のセッションのためにPlayerPrefsに保存する
@@ -34,29 +58,6 @@ namespace Education.FeelPhysics.PhotonTutorial
 
             PlayerPrefs.SetString(playerNamePrefKey, nameInputted);
             Debug.Log(MyHelper.FileAndMethodNameWithMessage("プレイヤー名が " + nameInputted + " に設定されました。"));
-        }
-
-        #endregion
-
-        #region MonoBehaviour CallBacks
-
-        /// <summary>
-        /// 過去に使用したプレイヤー名を入力欄に表示する
-        /// </summary>
-        private void Start()
-        {
-            string defaultName = "";
-            InputField inputField = this.GetComponent<InputField>();
-            if (inputField == null)
-            {
-                if (PlayerPrefs.HasKey(playerNamePrefKey))
-                {
-                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
-                    inputField.text = defaultName;
-                }
-            }
-
-            PhotonNetwork.playerName = defaultName;
         }
 
         #endregion

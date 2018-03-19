@@ -9,21 +9,18 @@ namespace Education.FeelPhysics.PhotonTutorial
     {
         #region Public Variables
 
-        /// <summary>
-        /// PUN ログレベル
-        /// </summary>
+        [Tooltip("PUN ログレベル")]
         public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
 
-        /// <summary>
-        /// ルームの最大プレイヤー人数。ルームが満員になると、その部屋に新しいプレイヤーが入ることはできないため、新しいルームが作成されます。
-        /// </summary>   
         [Tooltip("ルームの最大プレイヤー人数。ルームが満員になると、その部屋に新しいプレイヤーが入ることはできないため、新しいルームが作成されます。")]
         public byte MaxPlayersPerRoom = 4;
 
         [Tooltip("ユーザに名前を入力させ、接続してプレイさせるためのUIパネル")]
         public GameObject ControlPanel;
+
         [Tooltip("ユーザに接続が進行中であることを知らせるUIラベル")]
         public GameObject ProgressLabel;
+
         #endregion
 
         #region Private Variables
@@ -42,6 +39,44 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// これは、特に OnConnectedToMaster() コールバックのために使われる。
         /// </summary>
         private bool isConnecting;
+
+        #endregion
+
+        #region MonoBehaviour CallBacks
+
+        /// <summary>
+        /// 初期化の早い段階で Unity によって GameObject 上に呼ばれる MonoBegaviour のメソッド
+        /// </summary>
+        private void Awake()
+        {
+            // 【些細】
+            // ログレベルを指定する
+            PhotonNetwork.logLevel = this.Loglevel;
+
+            // 【必要】
+            // ロビーに入って他のプレイヤーのリストを見ることはしない
+            PhotonNetwork.autoJoinLobby = false;
+
+            // 【必要】
+            // PhotonNetwork.LoadLevel()をマスタークライアントで実行すれば
+            // 他のクライアントはすべて同じルームに入る
+            // 読み込まれたシーンが接続された全てのプレイヤーに対して同じになるようにする、
+            // Photonが提供する非常に便利な機能
+            PhotonNetwork.automaticallySyncScene = true;
+        }
+
+        /// <summary>
+        /// 初期化の段階でUnityによってGameObject上に呼ばれるMonoBegaviourのメソッド
+        /// </summary>
+        private void Start()
+        {
+            // PUNのバージョンをログに表示
+            Debug.Log("PUN バージョン: " + PhotonNetwork.versionPUN);
+
+            // コントロールパネルは表示し、進行中ラベルは非表示
+            this.ControlPanel.SetActive(true);
+            this.ProgressLabel.SetActive(false);
+        }
 
         #endregion
 
@@ -86,7 +121,6 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         public override void OnConnectedToMaster()
         {
-            base.OnConnectedToMaster();
             Debug.Log(MyHelper.FileAndMethodNameWithMessage(""));
 
             // プレイヤーがルームに参加しようとしていないときは、何もしたくない。
@@ -109,7 +143,6 @@ namespace Education.FeelPhysics.PhotonTutorial
             this.ControlPanel.SetActive(true);
             this.ProgressLabel.SetActive(false);
 
-            base.OnDisconnectedFromPhoton();
             Debug.Log(MyHelper.FileAndMethodNameWithMessage(""));
         }
 
@@ -119,7 +152,6 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// <param name="codeAndMsg">コードとメッセージ</param>
         public override void OnPhotonRandomJoinFailed(object[] codeAndMsg)
         {
-            base.OnPhotonRandomJoinFailed(codeAndMsg);
             Debug.Log(MyHelper.FileAndMethodNameWithMessage(codeAndMsg.ToString()));
             Debug.Log(MyHelper.FileAndMethodNameWithMessage("利用可能なランダムルームがないので、作成します\n" +
                 "呼び出し中: PhotonNetwork.CreateRoom(null, new RoomOptions() {MaxPlayers = 4}, null);"));
@@ -134,7 +166,6 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// </summary>
         public override void OnJoinedRoom()
         {
-            base.OnJoinedRoom();
             Debug.Log(MyHelper.FileAndMethodNameWithMessage("今、このクライアントはルームの中にいます。"));
 
             // 【必要】自分が一人目のプレイヤーのときのみルームをロードし、
@@ -148,42 +179,6 @@ namespace Education.FeelPhysics.PhotonTutorial
                 PhotonNetwork.LoadLevel("Room for 1");
             }
         }
-        #endregion
-
-        #region MonoBehaviour CallBacks
-
-        /// <summary>
-        /// 初期化の早い段階で Unity によって GameObject 上に呼ばれる MonoBegaviour のメソッド
-        /// </summary>
-        private void Awake()
-        {
-            // 【些細】
-            // ログレベルを指定する
-            PhotonNetwork.logLevel = this.Loglevel;
-
-            // 【必要】
-            // ロビーに入って他のプレイヤーのリストを見ることはしない
-            PhotonNetwork.autoJoinLobby = false;
-
-            // 【必要】
-            // PhotonNetwork.LoadLevel()をマスタークライアントで実行すれば
-            // 他のクライアントはすべて同じルームに入る
-            PhotonNetwork.automaticallySyncScene = true;
-        }
-
-        /// <summary>
-        /// 初期化の段階でUnityによってGameObject上に呼ばれるMonoBegaviourのメソッド
-        /// </summary>
-        private void Start()
-        {
-            // PUNのバージョンをログに表示
-            Debug.Log("PUN バージョン: " + PhotonNetwork.versionPUN);
-
-            // コントロールパネルは表示し、進行中ラベルは非表示
-            this.ControlPanel.SetActive(true);
-            this.ProgressLabel.SetActive(false);
-        }
-
         #endregion
     }
 }

@@ -36,39 +36,6 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// UIの target 変数にプレイヤーを入れる
-        /// </summary>
-        /// <param name="target">UIのターゲットプレイヤー</param>
-        public void SetTargetPlayer(PlayerManager target)
-        {
-            if (target == null)
-            {
-                Debug.LogError(MyHelper.FileAndMethodNameWithMessage("PlayerManager targetが<Color-Red>ありません</Color>"));
-            }
-
-            // 効率化のために参照をキャッシュする
-            this.targetPlayer = target;
-
-            // 名前を表示する
-            if (this.PlayerNameText != null)
-            {
-                this.PlayerNameText.text = this.targetPlayer.photonView.owner.NickName;
-            }
-
-            CharacterController characterController =
-                target.GetComponent<CharacterController>();
-
-            // このコンポーネントが存在している限り変わらないデータをプレイヤーから取得する
-            characterControllerHeight = characterController.height;
-
-            targetTransform = target.gameObject.transform;
-        }
-
-        #endregion
-
         #region MonoBehaviour CallBacks
 
         /// <summary>
@@ -115,6 +82,39 @@ namespace Education.FeelPhysics.PhotonTutorial
                 this.transform.position =
                     Camera.main.WorldToScreenPoint(targetPosition) + ScreenOffset;
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// UIの target 変数にプレイヤーを入れる
+        /// </summary>
+        /// <param name="target">UIのターゲットプレイヤー</param>
+        public void SetTargetPlayer(PlayerManager target)
+        {
+            if (target == null)
+            {
+                Debug.LogError(MyHelper.FileAndMethodNameWithMessage("PlayerManager targetが<Color-Red>ありません</Color>"));
+            }
+
+            // 効率化のために参照をキャッシュする
+            this.targetPlayer = target;
+
+            // 名前を表示する
+            if (this.PlayerNameText != null)
+            {
+                this.PlayerNameText.text = this.targetPlayer.photonView.owner.NickName;
+            }
+
+            CharacterController characterController =
+                target.GetComponent<CharacterController>();
+
+            // このコンポーネントが存在している限り変わらないデータをプレイヤーから取得する
+            characterControllerHeight = characterController.height;
+
+            targetTransform = target.gameObject.transform;
         }
 
         #endregion

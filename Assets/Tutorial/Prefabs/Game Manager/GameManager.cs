@@ -36,39 +36,15 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #endregion
 
-        #region Photon CallBacks
-
-        /// <summary>
-        /// ローカルプレイヤーが退室するときに呼ばれる。Launcherシーンをロードしなければならない。
-        /// </summary>
-        public override void OnLeftRoom()
-        {
-            SceneManager.LoadScene(0);
-        }
-
-        /// <summary>
-        /// プレイヤーが参加してきたとき
-        /// 自分がマスタークライアントならば、対応する人数用のアリーナをロードする
-        /// </summary>
-        /// <param name="newPlayer">参加してきたプレイヤー</param>
-        public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
-        {
-            base.OnPhotonPlayerConnected(newPlayer);
-
-            // 自分が接続した場合はこのメッセージは見えない
-            Debug.Log(MyHelper.FileAndMethodNameWithMessage(newPlayer.NickName));
-
-            if (PhotonNetwork.isMasterClient)
-            {
-                // OnPhotonPlayerDisconnected の前に呼ばれる
-                Debug.Log(MyHelper.FileAndMethodNameWithMessage("PhotonNetwork.isMasterClient " + PhotonNetwork.isMasterClient));
-                this.LoadArena();
-            }
-        }
-
-        #endregion
-
         #region MonoBehaviour CallBacks
+
+        /// <summary>
+        /// シーンがロードされたらプレイヤーがアリーナの外に出てしまっていないか確認する
+        /// </summary>
+        private void Awake()
+        {
+            SceneManager.sceneLoaded += this.SceneManager_sceneLoaded;
+        }
 
         /// <summary>
         /// シーンが変わったときに必要ならプレイヤーをインスタンス化する
@@ -111,8 +87,9 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// シーンがロードされたときに呼ばれる
         /// プレイヤーがアリーナの外側にいるかチェックする。外側にいる場合は、安全なアリーナの中心付近に出現させる
         /// </summary>
-        /// <param name="level">シーンのレベル</param>
-        private void OnLevelWasLoaded(int level)
+        /// <param name="arg0">シーン</param>
+        /// <param name="arg1">シーンをロードするモード</param>
+        private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             // 現在のプレイヤーの位置を下方向にレイキャストして、何かに衝突するかを確認します。 
             // 何にも当たらない場合はアリーナの地面より上にはいないことを意味するので、
@@ -120,6 +97,37 @@ namespace Education.FeelPhysics.PhotonTutorial
             if (!Physics.Raycast(transform.position, -Vector3.up, 5f))
             {
                 transform.position = new Vector3(0f, 1.0f, 0f);
+            }
+        }
+
+        #endregion
+
+        #region Photon CallBacks
+
+        /// <summary>
+        /// ローカルプレイヤーが退室するときに呼ばれる。Launcherシーンをロードしなければならない。
+        /// チュートリアルでは「public void void OnLeftRoom()」とタイポしてます。気をつけて下さい。
+        /// </summary>
+        public override void OnLeftRoom()
+        {
+            SceneManager.LoadScene("Launcher");
+        }
+
+        /// <summary>
+        /// プレイヤーが参加してきたとき
+        /// 自分がマスタークライアントならば、対応する人数用のアリーナをロードする
+        /// </summary>
+        /// <param name="newPlayer">参加してきたプレイヤー</param>
+        public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
+        {
+            // 自分が接続した場合はこのメッセージは見えない
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage(newPlayer.NickName));
+
+            if (PhotonNetwork.isMasterClient)
+            {
+                // OnPhotonPlayerDisconnected の前に呼ばれる
+                Debug.Log(MyHelper.FileAndMethodNameWithMessage("PhotonNetwork.isMasterClient " + PhotonNetwork.isMasterClient));
+                this.LoadArena();
             }
         }
 
