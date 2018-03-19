@@ -84,6 +84,14 @@ namespace Education.FeelPhysics.PhotonTutorial
         }
 
         /// <summary>
+        /// シーンが終了したらイベントを削除する
+        /// </summary>
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= this.SceneManager_sceneLoaded;
+        }
+
+        /// <summary>
         /// シーンがロードされたときに呼ばれる
         /// プレイヤーがアリーナの外側にいるかチェックする。外側にいる場合は、安全なアリーナの中心付近に出現させる
         /// </summary>
