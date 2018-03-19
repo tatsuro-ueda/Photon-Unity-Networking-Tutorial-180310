@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 namespace Education.FeelPhysics.PhotonTutorial
 {
+    /// <summary>
+    /// キャラクターの上にプレイヤー名と体力ゲージを表示させる
+    /// </summary>
     public class PlayerUI : MonoBehaviour
     {
-
         #region Public Valuables
 
         [Tooltip("プレイヤー名を表示する表示するUIテキスト")]
@@ -20,45 +22,53 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #region Private Valuables
 
-        // 定期的に体力をルックアップすることになるので、計画的に考える必要があります。
-        // 効率を良くするためにPlayerManagerの参照をキャッシュすると有効です。
-        PlayerManager _target;
+        /// <summary>
+        /// 定期的に体力をルックアップすることになるので、計画的に考える必要があります。
+        /// 効率を良くするためにPlayerManagerの参照をキャッシュすると有効です。
+        /// </summary>
+        private PlayerManager target;
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// target変数にプレイヤーを入れる
+        /// </summary>
+        /// <param name="target">プレイヤー</param>
+        public void SetTarget(PlayerManager target)
+        {
+            if (this.target == null)
+            {
+                Debug.LogError(MyHelper.FileAndMethodNameWithMessage("PlayerManager targetが<Color-Red>ありません</Color>"));
+            }
+
+            // 効率化のために参照をキャッシュする
+            this.target = target;
+            if (this.PlayerNameText != null)
+            {
+                this.PlayerNameText.text = this.target.photonView.owner.NickName;
+            }
+        }
 
         #endregion
 
         #region MonoBehaviour CallBacks
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
-
+            
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <summary>
+        /// プレイヤーの体力を体力ゲージに反映させる
+        /// </summary>
+        private void Update()
         {
-            // プレイヤーの体力を反映させる
-            if (PlayerHealthSlider != null)
+            if (this.PlayerHealthSlider != null)
             {
-                PlayerHealthSlider.value = _target.Health;
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public void SetTarget(PlayerManager target)
-        {
-            if (target == null)
-            {
-                Debug.LogError(MyHelper.FileAndMethodNameWithMessage("PlayerManager targetが<Color-Red>ありません</Color>"));
-            }
-            // 効率化のために参照をキャッシュする
-            _target = target;
-            if (PlayerNameText != null)
-            {
-                PlayerNameText.text = _target.photonView.owner.NickName;
+                this.PlayerHealthSlider.value = this.target.Health;
             }
         }
 

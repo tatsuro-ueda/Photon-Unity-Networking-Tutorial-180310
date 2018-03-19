@@ -4,33 +4,45 @@ using UnityEngine;
 
 namespace Education.FeelPhysics.PhotonTutorial
 {
+    /// <summary>
+    /// キー入力によってAnimatorの状態と変数が変わるのを管理する
+    /// </summary>
     public class PlayerAnimatorManager : Photon.MonoBehaviour
     {
-        #region Public Properties
+        #region Public Variables
 
-        // Damp Time は「待ち時間」
-        // 希望する値（最大の回転能力）に到達するまでの時間
-        // 変えても動きはあまり変化しないような？
+        /// <summary>
+        /// Damp Time は「待ち時間」
+        /// 希望する値（最大の回転能力）に到達するまでの時間
+        /// ※変えても動きはあまり変化しないような？
+        /// </summary>
         public float DirectionDampTime = .25f;
 
         #endregion
 
         #region MonoBehavior CallBacks
 
+        /// <summary>
+        /// Animatorコンポーネントを格納して使い回す
+        /// </summary>
         private Animator animator;
 
-        // Use this for initialization
-        void Start()
+        /// <summary>
+        /// Animatorコンポーネントを animator 変数に格納する
+        /// </summary>
+        private void Start()
         {
-            animator = GetComponent<Animator>();
-            if (!animator)
+            this.animator = this.GetComponent<Animator>();
+            if (!this.animator)
             {
                 Debug.LogError(MyHelper.FileAndMethodNameWithMessage("Animatorコンポーネントがありません。"));
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <summary>
+        /// 速さ、方向、ジャンプなどをキー入力に応じて変化させる
+        /// </summary>
+        private void Update()
         {
             // インスタンスが クライアントアプリケーションによって制御されている場合、
             // このインスタンスはこのコンピュータのこのアプリケーション内でプレイしているユーザを表し、
@@ -42,7 +54,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                 return;
             }
 
-            if (!animator)
+            if (!this.animator)
             {
                 return;
             }
@@ -57,20 +69,24 @@ namespace Education.FeelPhysics.PhotonTutorial
 
             // 【前進】
             // 右か左のいずれかのみを入力した際、ターンをしながら加速できるようにする
-            animator.SetFloat("Speed", h * h + v * v);
+            this.animator.SetFloat("Speed", (h * h) + (v * v));
 
             // 【ターン】
             // 左右方向の入力があるとターンする
             // deltaTime はフレーム間の時間。Update() はフレームレートに依存するため、この変数を使う
-            animator.SetFloat("Direction", h, DirectionDampTime, Time.deltaTime);
+            this.animator.SetFloat("Direction", h, this.DirectionDampTime, Time.deltaTime);
 
             // 【ジャンプ】
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            AnimatorStateInfo stateInfo = this.animator.GetCurrentAnimatorStateInfo(0);
+
             // 走っているときだけジャンプできる
             if (stateInfo.IsName("Base Layer.Run"))
             {
                 // Fire2 Input（Altキー、右クリック）があれば Jump トリガーを発生させる
-                if (Input.GetButtonDown("Fire2")) animator.SetTrigger("Jump");
+                if (Input.GetButtonDown("Fire2"))
+                {
+                    this.animator.SetTrigger("Jump");
+                }
             }
         }
 

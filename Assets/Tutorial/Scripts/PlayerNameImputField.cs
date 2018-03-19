@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-using System.Collections;
-
 namespace Education.FeelPhysics.PhotonTutorial
 {
     /// <summary>
@@ -14,35 +12,10 @@ namespace Education.FeelPhysics.PhotonTutorial
     {
         #region Private Variables
 
-        // タイプミスを避けるため、PlayerPrefキーを格納する
-        static string playerNamePrefKey = "PlayerName";
-
-        #endregion
-
-        #region MonoBehaviour CallBacks
-
-        // Use this for initialization
-        void Start()
-        {
-            string defaultName = "";
-            InputField _inputField = this.GetComponent<InputField>();
-            if (_inputField == null)
-            {
-                if (PlayerPrefs.HasKey(playerNamePrefKey))
-                {
-                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
-                    _inputField.text = defaultName;
-                }
-            }
-
-            PhotonNetwork.playerName = defaultName;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+        /// <summary>
+        /// タイプミスを避けるため、PlayerPrefキーを格納する 
+        /// </summary>
+        private static string playerNamePrefKey = "PlayerName";
 
         #endregion
 
@@ -50,17 +23,42 @@ namespace Education.FeelPhysics.PhotonTutorial
         /// <summary>
         /// プレイヤー名を設定し、以後のセッションのためにPlayerPrefsに保存する
         /// </summary>
-        /// <param name="userField"></param>
-        public void SetPlayerName(InputField userField)
+        /// <param name="value">入力されたプレイヤー名</param>
+        public void SetPlayerName(string value)
         {
-            string name = userField.text;
+            var nameInputted = value;
+
             // 【重要】
             // 変数が空だったときのために末尾にスペースを付ける
-            PhotonNetwork.playerName = name + " ";
+            PhotonNetwork.playerName = nameInputted + " ";
 
-            PlayerPrefs.SetString(playerNamePrefKey, name);
-            Debug.Log(MyHelper.FileAndMethodNameWithMessage("プレイヤー名が " + name + " に設定されました。"));
+            PlayerPrefs.SetString(playerNamePrefKey, nameInputted);
+            Debug.Log(MyHelper.FileAndMethodNameWithMessage("プレイヤー名が " + nameInputted + " に設定されました。"));
         }
+
+        #endregion
+
+        #region MonoBehaviour CallBacks
+
+        /// <summary>
+        /// 過去に使用したプレイヤー名を入力欄に表示する
+        /// </summary>
+        private void Start()
+        {
+            string defaultName = "";
+            InputField inputField = this.GetComponent<InputField>();
+            if (inputField == null)
+            {
+                if (PlayerPrefs.HasKey(playerNamePrefKey))
+                {
+                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                    inputField.text = defaultName;
+                }
+            }
+
+            PhotonNetwork.playerName = defaultName;
+        }
+
         #endregion
     }
 }
