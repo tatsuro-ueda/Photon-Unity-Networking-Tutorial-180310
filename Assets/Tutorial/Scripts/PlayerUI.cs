@@ -46,7 +46,7 @@ namespace Education.FeelPhysics.PhotonTutorial
         private void Awake()
         {
             this.GetComponent<Transform>().SetParent(
-                GameObject.Find("Top Panel").GetComponent<Transform>());
+                GameObject.Find("Canvas").GetComponent<Transform>());
         }
 
         /// <summary>
@@ -106,6 +106,7 @@ namespace Education.FeelPhysics.PhotonTutorial
             if (this.PlayerNameText != null)
             {
                 this.PlayerNameText.text = this.targetPlayer.photonView.owner.NickName;
+                Debug.Log(MyHelper.FileAndMethodNameWithMessage(this.PlayerNameText.text));
             }
 
             CharacterController characterController =

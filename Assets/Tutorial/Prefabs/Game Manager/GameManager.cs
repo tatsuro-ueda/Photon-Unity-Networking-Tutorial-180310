@@ -24,18 +24,6 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// プレイヤーの体力が0になり死亡するとPlayerManagerから呼ばれる
-        /// </summary>
-        public void LeaveRoom()
-        {
-            PhotonNetwork.LeaveRoom();
-        }
-
-        #endregion
-
         #region MonoBehaviour CallBacks
 
         /// <summary>
@@ -66,7 +54,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                 if (PlayerManager.LocalPlayerInstance == null)
                 {
                     Debug.Log(MyHelper.FileAndMethodNameWithMessage(
-                        SceneManager.GetActiveScene().name + "シーンから、ローカルプレイヤーをインスタンス化します"));
+                        SceneManager.GetActiveScene().name + " シーンから、ローカルプレイヤーをインスタンス化します"));
 
                     // ルームに入ったので、ローカルプレイヤーのためにキャラクターを出現させる。
                     // PhotonNetwork.Instantiate を使うことで同期することができる。
@@ -78,7 +66,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                 else
                 {
                     Debug.Log(MyHelper.FileAndMethodNameWithMessage(
-                        SceneManager.GetActiveScene().name + "シーンのロードを無視します"));
+                        SceneManager.GetActiveScene().name + " シーンのロードを無視します"));
                 }
             }
         }
@@ -137,6 +125,18 @@ namespace Education.FeelPhysics.PhotonTutorial
                 Debug.Log(MyHelper.FileAndMethodNameWithMessage("PhotonNetwork.isMasterClient " + PhotonNetwork.isMasterClient));
                 this.LoadArena();
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// プレイヤーの体力が0になり死亡するとPlayerManagerから呼ばれる
+        /// </summary>
+        public void LeaveRoom()
+        {
+            PhotonNetwork.LeaveRoom();
         }
 
         #endregion

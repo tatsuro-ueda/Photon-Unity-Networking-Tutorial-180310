@@ -95,6 +95,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                     "CameraWorkコンポーネントがプレイヤープレハブに<Color=Red>ありません</Color>。"));
             }
 
+            /*
             if (PlayerUIPrefab != null)
             {
                 GameObject uiGo = Instantiate(PlayerUIPrefab);
@@ -107,6 +108,7 @@ namespace Education.FeelPhysics.PhotonTutorial
                 Debug.LogWarning(MyHelper.FileAndMethodNameWithMessage(
                     "プレイヤープレハブ上の PlayerUIPrefab への参照が<Color=Red>ありません</Color>"));
             }
+            */
         }
 
         /// <summary>
