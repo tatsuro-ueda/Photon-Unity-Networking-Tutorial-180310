@@ -24,6 +24,9 @@ namespace Education.FeelPhysics.PhotonTutorial
         [Tooltip("プレイヤーの現在の体力")]
         public float Health = 1f;
 
+        [Tooltip("プレイヤーUI")]
+        public GameObject PlayerUIPrefab;
+
         #endregion
 
         #region Private Variables
@@ -98,6 +101,10 @@ namespace Education.FeelPhysics.PhotonTutorial
 
         /// <summary>
         /// シーンの最初に追尾カメラをセットする
+        ///   ＋
+        /// UIをインスタンス化します。
+        /// 作成したインスタンスにメッセージを送信しています。レシーバが必要です。
+        /// つまり、SetTargetが反応するコンポーネントを見つけらなかった場合に通知されます。
         /// </summary>
         private void Start()
         {
@@ -119,6 +126,19 @@ namespace Education.FeelPhysics.PhotonTutorial
             {
                 Debug.LogError(MyHelper.FileAndMethodNameWithMessage(
                     "CameraWorkコンポーネントがプレイヤープレハブに<Color=Red>ありません</Color>。"));
+            }
+
+            if (PlayerUIPrefab != null)
+            {
+                GameObject uiGo = Instantiate(PlayerUIPrefab);
+
+                // ※わからん
+                uiGo.SendMessage("SetTargetPlayer", this, SendMessageOptions.RequireReceiver);
+            }
+            else
+            {
+                Debug.LogWarning(MyHelper.FileAndMethodNameWithMessage(
+                    "プレイヤープレハブ上の PlayerUIPrefab への参照が<Color=Red>ありません</Color>"));
             }
         }
 
